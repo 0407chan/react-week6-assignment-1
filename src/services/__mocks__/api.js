@@ -6,7 +6,6 @@ export async function fetchRegions() {
   return [];
 }
 
-export async function fetchRestaurants({ regionName, categoryId }) {
-  console.log(regionName, categoryId);
+export async function fetchRestaurants() {
   return [];
 }
