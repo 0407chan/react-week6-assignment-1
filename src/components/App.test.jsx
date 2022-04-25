@@ -25,30 +25,7 @@ describe('App', () => {
     return render(<App />);
   }
 
-  it('fetchs regions, categories, restaurants', () => {
+  it('App이 렌더링 된다.', () => {
     renderApp();
-
-    expect(dispatch).toBeCalledTimes(3);
-  });
-
-  it('renders regions', () => {
-    const { queryByText } = renderApp();
-
-    expect(queryByText(/서울/)).not.toBeNull();
-    expect(queryByText(/대전/)).not.toBeNull();
-  });
-
-  it('renders categories', () => {
-    const { queryByText } = renderApp();
-
-    expect(queryByText(/한식/)).not.toBeNull();
-    expect(queryByText(/일식/)).not.toBeNull();
-  });
-
-  it('renders restautants', () => {
-    const { queryByText } = renderApp();
-
-    expect(queryByText(/두향/)).not.toBeNull();
-    expect(queryByText(/맥도날드/)).not.toBeNull();
   });
 });
