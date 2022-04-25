@@ -1,52 +1,62 @@
+import given from 'given2';
 import { fetchRegions, fetchCategories, fetchRestaurants } from './api';
 
-import REGIONS from '../../fixtures/regions';
-import CATEGORIES from '../../fixtures/categories';
-import RESTAURANTS from '../../fixtures/restaurants';
+import regions from '../fixtures/regions';
+import categories from '../fixtures/categories';
+import restaurants from '../fixtures/restaurants';
 
 describe('api', () => {
-  const mockFetch = (data) => {
-    global.fetch = jest.fn().mockResolvedValue({
-      async json() { return data; },
-    });
-  };
+  given('regions', () => []);
+  given('categories', () => []);
+  given('restaurants', () => []);
+
+  global.fetch = jest.fn(() => Promise.resolve({
+    json: () => Promise.resolve({
+      regions: given.regions,
+      categories: given.categories,
+      restaurants: given.restaurants,
+    }),
+  }));
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   describe('fetchRegions', () => {
-    beforeEach(() => {
-      mockFetch(REGIONS);
-    });
+    it('fetches Regions', async () => {
+      given('regions', () => regions);
 
-    it('returns regions', async () => {
-      const regions = await fetchRegions();
+      const response = await fetchRegions();
 
-      expect(regions).toEqual(REGIONS);
+      expect(response.regions[0].name).toBe('서울');
+      expect(response.regions).toHaveLength(2);
+      expect(global.fetch).toBeCalledWith('https://eatgo-customer-api.ahastudio.com/regions');
     });
   });
 
   describe('fetchCategories', () => {
-    beforeEach(() => {
-      mockFetch(CATEGORIES);
-    });
+    it('fetches categories', async () => {
+      given('categories', () => categories);
+      const response = await fetchCategories();
 
-    it('returns categories', async () => {
-      const categories = await fetchCategories();
-
-      expect(categories).toEqual(CATEGORIES);
+      expect(response.categories[0].name).toBe('한식');
+      expect(response.categories).toHaveLength(2);
+      expect(global.fetch).toBeCalledWith('https://eatgo-customer-api.ahastudio.com/categories');
     });
   });
 
   describe('fetchRestaurants', () => {
-    beforeEach(() => {
-      mockFetch(RESTAURANTS);
-    });
+    it('fetches restaurants', async () => {
+      given('restaurants', () => restaurants);
 
-    it('returns restaurants', async () => {
-      const restaurants = await fetchRestaurants({
-        regionName: '서울',
-        categoryId: 1,
-      });
+      const regionName = 'hello';
+      const categoryId = 3;
+      const url = `https://eatgo-customer-api.ahastudio.com/restaurants?region=${regionName}&category=${categoryId}`;
+      const response = await fetchRestaurants({ regionName, categoryId });
 
-      expect(restaurants).toEqual(RESTAURANTS);
+      expect(response.restaurants[0].name).toBe('두향');
+      expect(response.restaurants).toHaveLength(2);
+      expect(global.fetch).toBeCalledWith(url);
     });
   });
 });
